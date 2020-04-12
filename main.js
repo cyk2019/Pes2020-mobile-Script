@@ -11,7 +11,7 @@ sleep(5000);
 setScreenMetrics(1080, 2340);
 
 //提示信息
-toast("实况足球手游脚本V1.0  启动...");
+toast("实况足球手游脚本V1.1  启动...");
 sleep(randomTime);
 toast("当前屏幕尺寸 高："+device.height+" 宽："+device.width);
 sleep(randomTime);
@@ -121,7 +121,7 @@ function startGame()
     click(2015,985);
     sleep(randomTime);
     click(2015,985);
-    sleep(5000);
+    sleep(8000);
 
     //出现活动奖励
     status_img = images.captureScreen();
