@@ -54,13 +54,10 @@ click(1600,580);
 sleep(randomTime);
 
 //循环
-for(var i = 0;i<9999;i++)
+for(var i = 1;i<9999;i++)
 {
-    var count = 0;
     startGame();
-    startGame().next.recycle();
-    count = count + 1;
-    toast("已经踢了"+count+"局");
+    toast("已经踢了"+i+"场");
 }
 
 /**
@@ -81,28 +78,27 @@ function startGame()
     click(2015,985);
     sleep(10000);
 
-    do
+    //比赛回放
+    var traceImg = images.read("/sdcard/ScreenCapture/trace_game.jpg");
+    //中场休息
+    var halfImg = images.read("/sdcard/ScreenCapture/half_game.jpg");
+    //全场结束
+    var endImg = images.read("/sdcard/ScreenCapture/end_game.jpg");
+
+    //截屏
+    var img = images.captureScreen();
+    images.save(img, "/sdcard/ScreenCapture/status.png");
+    sleep(randomTime);
+    var statusImg = images.read("/sdcard/ScreenCapture/status.png");
+
+    /**
+     * 比赛阶段
+     */
+    while(!images.findImage(statusImg, endImg))
     {
-        //前往比赛
-        var next = images.read("/sdcard/ScreenCapture/next.jpg");
-        //比赛回放
-        var traceImg = images.read("/sdcard/ScreenCapture/trace_game.jpg");
-        //中场休息
-        var halfImg = images.read("/sdcard/ScreenCapture/half_game.jpg");
-        //全场结束
-        var endImg = images.read("/sdcard/ScreenCapture/end_game.jpg");
-        //获取奖励
-        var rewardImg = images.read("/sdcard/ScreenCapture/reward.jpg");
-        //续约状态
-        var renewImg = images.read("/sdcard/ScreenCapture/renew.jpg");
-        //球员续约
-        var playerImg = images.read("/sdcard/ScreenCapture/player_status.jpg");
-        //教练续约
-        var coachImg;
-
-
-        //截屏
-        var img = images.captureScreen();
+        statusImg.recycle();
+        sleep(2000);
+        img = images.captureScreen();
         images.save(img, "/sdcard/ScreenCapture/status.png");
         sleep(randomTime);
         var statusImg = images.read("/sdcard/ScreenCapture/status.png");
@@ -112,28 +108,67 @@ function startGame()
         {
             traceGame();
         }
-        
+
         //中场休息
-        else if(images.findImage(statusImg, halfImg))
+        if(images.findImage(statusImg, halfImg))
         {
             halfGame();
         }
+        sleep(5000);
+    }
 
-        //全场结束
-        else if(images.findImage(statusImg, endImg))
-        {
-            endGame();
-        }
+    //全场结束
+    traceImg.recycle();
+    halfImg.recycle();
+    endImg.recycle();
+    statusImg.recycle();
+    endGame();
+    sleep(5000);
 
-        //活动奖励
-        else if(images.findImage(statusImg, rewardImg))
+    /**
+     * 领取奖励阶段
+     */
+
+    //前往比赛
+    var next = images.read("/sdcard/ScreenCapture/next.jpg");
+    //获取奖励
+    var rewardImg = images.read("/sdcard/ScreenCapture/reward.jpg");
+    //续约状态
+    var renewImg = images.read("/sdcard/ScreenCapture/renew.jpg");
+    //球员续约
+    var playerImg = images.read("/sdcard/ScreenCapture/player_status.jpg");
+    //教练续约
+    var coachImg;
+
+    //截屏
+    var img = images.captureScreen();
+    images.save(img, "/sdcard/ScreenCapture/status.png");
+    sleep(randomTime);
+    var statusImg = images.read("/sdcard/ScreenCapture/status.png");
+
+    //未找到前往比赛按钮
+    while(!images.findImage(statusImg, next))
+    {
+        //当前为领奖状态
+        if(images.findImage(statusImg, rewardImg))
         {
+            statusImg.recycle();
             reward();
+            sleep(2000);
+
+            //截屏
+            var img = images.captureScreen();
+            images.save(img, "/sdcard/ScreenCapture/status.png");
+            sleep(randomTime);
+            var statusImg = images.read("/sdcard/ScreenCapture/status.png");
         }
 
-        //教练、球员续约
-        else if(images.findImage(statusImg, renewImg))
+        //当前为续约状态
+        if(images.findImage(statusImg, renewImg))
         {
+            click(1200,823);
+            sleep(1000);
+
             //球员续约
             if(images.findImage(statusImg, playerImg))
             {
@@ -144,6 +179,7 @@ function startGame()
                     click(p.x,p.y);
                     sleep(1000);
                     player_renew();
+                    sleep(randomTime);
                     statusImg.recycle();
 
                     img = images.captureScreen();
@@ -151,28 +187,18 @@ function startGame()
                     sleep(randomTime);
                     var statusImg = images.read("/sdcard/ScreenCapture/status.png");
                 }
+                playerImg.recycle();
                 select.recycle();
+                click(2015,985);
+                sleep(5000);
             }
 
             //教练续约
-
-            sleep(1000);
-            click(2015,985);
-            sleep(5000);
         }
-        
-
-        traceImg.recycle();
-        halfImg.recycle();
-        endImg.recycle();
-        rewardImg.recycle();
-        renewImg.recycle();
-        playerImg.recycle();
-
-        sleep(3000);
-
-    }while(!images.findImage(statusImg, next));
+    }
+    statusImg.recycle();
 }
+
 
 /**
  * 半场
@@ -203,7 +229,6 @@ function endGame()
  */
 function traceGame()
 {
-    click(2015,985);
     click(2015,985);
     click(2015,985);
 }
@@ -242,6 +267,6 @@ function player_renew()
     click(946,610);
     sleep(1000);
     click(1400,630);
-    sleep(1000);
+    sleep(randomTime);
     click(1165,760); //点击ok
 }
