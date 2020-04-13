@@ -11,7 +11,7 @@ sleep(5000);
 setScreenMetrics(1080, 2340);
 
 //提示信息
-toast("实况足球手游脚本V1.2  启动...");
+toast("实况足球手游脚本V1.1  启动...");
 sleep(randomTime);
 toast("当前屏幕尺寸 高："+device.height+" 宽："+device.width);
 sleep(randomTime);
